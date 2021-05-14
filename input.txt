@@ -1,5 +1,4 @@
-soufian
-soufian
-soufian
-dit is een test programma
-ik moet een encoder maken!
+Dit is een test file.
+Ik ben soufian.
+Dit is een 2de test!
+3de test.
