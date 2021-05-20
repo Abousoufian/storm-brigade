@@ -1,11 +1,12 @@
 #include "personalLib.h"
 
+
 int main() 
 {
-	code();
-	//decode();
+	//code();
+	decode();
+	
 	return 0;
-
 }
 
 

@@ -1,5 +1,19 @@
 #include "personalLib.h"
 #include "nameOfFiles.h"
+void helpMenu()
+{
+	printf("-c -> Compress\n");
+	printf("-s -> The input text file that contains the secret message\n");
+	printf("-i -> The input bmp file\n");
+	printf("-d -> decompress\n");
+	printf("-o -> The output text file or bmp file\n\n\n");
+	
+	
+	printf("examples:\n");
+	printf("\tstormBrigade -c -s inputfile.txt -i meme.bmp -o memeou.bmp\n");
+	printf("\tstormBrigade -d -i meme.bmp -o bericht.txt\n");
+}
+
 
 // get size of a file
 int getSize(FILE *file)
@@ -26,6 +40,7 @@ int getSizeBMPFile(FILE *BMPfile)
 	return imageSize;
 }
 
+// read data from a BMPfile
 void readBMPfile(char *bmpHeaderInfo, unsigned char *inputPixels, int imageSize)
 {
     FILE *fp = fopen(inputBMPFileName, "rb");
@@ -55,6 +70,7 @@ void convertToBinary(char inputChar, int *array)
 	}	
 }
 
+// write data to a BMPfile
 void writeBMPfile(char *bmpHeaderInfo, unsigned char *inputPixels, int imageSize)
 {
     FILE *fp = fopen(outputBMPFileName, "wb");
@@ -69,7 +85,32 @@ void writeBMPfile(char *bmpHeaderInfo, unsigned char *inputPixels, int imageSize
 	
     fclose(fp);
 }
+
+void getLSB(unsigned char *inputPixels, unsigned char *redPixels, int imageSize)
+{	
+	int redPxIndex = 0;
 	
+	for(int i =0; i < imageSize-2; i+=3)
+	{
+		redPixels[redPxIndex] = inputPixels[i+2]%2;
+		redPxIndex++;
+	}	
+}
+
+// convert binary array to numb
+int convertToNumb(int *array)
+{
+	int numb = 0;
+	int power = 1;
+	for(int i=0; i<8; i++)
+	{
+		numb += array[7-i] * power;
+		power*=2;
+	}	
+	return numb;
+}		
+
+// encrypt a secret message from a text file to a BMPfile
 void code()
 {
 	
@@ -98,7 +139,7 @@ void code()
 					*/
 			
 	//3. (CHECKED)
-	// storing the data of the input text file into the buffer (CHECKED)
+	// stores the data of the input text file into the buffer (CHECKED)
 	unsigned char *txtInputBuffer  = (unsigned char *) calloc(txtFileSize, sizeof(unsigned char));
 	
 	fread(txtInputBuffer,sizeof(char), txtFileSize, inputTxtFile);
@@ -219,8 +260,7 @@ void code()
 	writeBMPfile(bmpHeaderInfo, inputPixels, imageSize);
 }
 
-
-/*
+// decrypt a secret message from a BMPfile to a text file
 void decode()
 {
 	//-----------------------------------------------------------------------------------------------------------------//
@@ -240,10 +280,10 @@ void decode()
 	//6. (CHECKED)
 	unsigned int imageSize = getSizeBMPFile(BMPfile);
 			
-					
+					/*
 					//test: print imageSize
 					printf("%d\n", imageSize);
-					
+					*/
 			
 	
 	//7. (CHECKED)
@@ -252,54 +292,47 @@ void decode()
 	
 	readBMPfile(bmpHeaderInfo, inputPixels, imageSize);	//CHECKED
 			
-					
+					/*
 					//test: check if inputPixels stores data of inputBMPFileName
 					for(int i =0; i < imageSize-2; i+=3)
 					{
 						printf("pixel %d: B= %d, G=%d, R=%d\n", i, inputPixels[i], inputPixels[i+1], inputPixels[i+2]);
 					}
-					
+					*/
 	
 	fclose(BMPfile);	
 	
-	unsigned char *redPixels = (unsigned char *) calloc(imageSize/3, sizeof(unsigned char));
-	int redPxIndex = 0;
 	
-	for(int i =0; i < imageSize-2; i+=3) //(CHECKED)
-	{
-		redPixels[redPxIndex] = inputPixels[i+2]%2;
-		redPxIndex++;
-	}	
-					
+	unsigned char *redPixels = (unsigned char *) calloc(imageSize/3, sizeof(unsigned char));
+	
+	getLSB(inputPixels, redPixels, imageSize);
+	
+					/*
 					//test: check if redPixels stores data of inputPixels
 					for(int i =0; i < (imageSize-2)/3; i++)
 					{
 						printf("pixel %d: R=%d\n", i, redPixels[i]);
 					}
-					
+					*/
 					
 				
 	free(inputPixels); 	
 	
 	int array[9] = {0};
+	int numb = 0;
 	
 	for(int i=0; i<imageSize/3; i+=8)
 	{
+		// store de LSB of red into a 8bit array
 		for(int j=0; j<8; j++)
 		{
 			array[j] = redPixels[i+j];
 		}
 		
-		int numb = 0;
-		int power = 1;
+		// convert binary array to numb
+		numb = convertToNumb(array);
 		
-		for(int i=0; i<8; i++)
-		{
-			numb += array[7-i] * power;
-			power*=2;
-		}
-		
-		printf("%d\n", numb);
+		printf("%d\t", numb);
 		
 		if(numb==42)
 		{
@@ -316,11 +349,8 @@ void decode()
 		}
 				
 		putc(numb,outputTxtFile);
-		
 	}
-	
 }
-	*/
 	
 	
 	
