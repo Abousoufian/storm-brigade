@@ -321,7 +321,7 @@ void decode()
 	
 	int array[9] = {0};
 	int numb = 0;
-	
+	FILE *outputTxtFile = fopen(outputTxtFileName, "ab");
 	for(int i=0; i<imageSize/3; i+=8)
 	{
 		// store de LSB of red into a 8bit array
@@ -341,17 +341,16 @@ void decode()
 			i=imageSize/3;
 		}
 		
-		FILE *outputTxtFile = fopen(outputTxtFileName, "ab");
-			
 		if(outputTxtFile == NULL)
 		{
 			printf("Something went wrong while trying to open %s\n", outputTxtFileName);
 			exit(EXIT_FAILURE);
 		}
 		
-		fwrite(numb,sizeof(char), txtFileSize, outputTxtFile);
+		putc(numb, outputTxtFile);
 	}
-	
+	free(redPixels);
+
 	
 }
 	

@@ -5,7 +5,6 @@ int main()
 {
 	code();
 	decode();
-	decode();
 	
 	helpMenu();
 	
