@@ -56,23 +56,8 @@ void readBMPfile(char *bmpHeaderInfo, unsigned char *inputPixels, int imageSize)
     fclose(fp);
 }
 
-void readoutBMPfile(char *bmpHeaderInfo, unsigned char *inputPixels, int imageSize)
-{
-    FILE *fp = fopen(outputBMPFileName, "rb");
-    if(fp == NULL)
-    {
-        printf("Something went wrong while trying to open %s\n", outputBMPFileName);
-        exit(EXIT_FAILURE);
-    }
-    
-	fread(bmpHeaderInfo, sizeof(unsigned char), 54, fp);
-
-    fread(inputPixels, sizeof(unsigned char), imageSize, fp);
-    fclose(fp);
-}
-
 // converts decimal number or character into a binary number
-void convertToBinary(char inputChar, char *array)
+void convertToBinary(char inputChar, int *array)
 {
 	int bufferSize = 9;
 	int temp = inputChar;
@@ -214,14 +199,15 @@ void code()
 					}
 					*/
 					
-	
+	free(txtInputBuffer);
+	free(inputPixels);
 	//8.
 	fclose(BMPfile);
 	
 	//-----------------------------------------------------------------------------------------------------------------//
 
 	int bmpIndex = 2;
-	char array[8] = {0};
+	int array[9] = {0};
 
 	for (int i=0; i<txtFileSize; i++) 
 	{
@@ -230,9 +216,10 @@ void code()
 				
 					/*
 					//test: print inputChar
-					printf("%c: ", inputChar);
+					printf("%c", inputChar);
 					*/
-					
+				
+			
 		//2. convert character naar binary
 		convertToBinary(inputChar, array);	
 					
@@ -244,18 +231,14 @@ void code()
 					}
 					printf("\n");
 					*/
-					
-		//3. loop door byte array
-		for(char i=0; i<8;i++)
-		{
-			if((inputPixels[bmpIndex] & 0b00000001) != array[i])
-			{
-			inputPixels[bmpIndex] ^= 1;
-			}	
-			bmpIndex +=3;
-		}
-		
 	
+
+		//3. loop door byte array
+		for(int i =0; i < 8; i++)
+		{
+			inputPixels[bmpIndex] = inputPixels[bmpIndex] & (0b11111110 | array[i]);
+			bmpIndex+=3;
+		}
 		
 					/*
 					//test: print inputPixels after LSB of red is changed
@@ -265,26 +248,17 @@ void code()
 					}
 					*/
 					
-					
 	}
 	
 	//4. insert "*" in BMPfile to mark the end of secret message
-	unsigned char temp= 0b01010100;
-	for (char i =0; i<8; i++) 
+	unsigned char temp[8]= {0,0,1,0,1,0,1,0};
+	for (int i =0; i<8; i++) 
 	{
-		if((inputPixels[bmpIndex] & 0b00000001) != (temp >> i & 0b00000001))
-		{
-			inputPixels[bmpIndex] ^= 1;
-		}	
+		inputPixels[bmpIndex] = inputPixels[bmpIndex] & (0b11111110 | temp[i]);
 		bmpIndex+=3;
 	}
-
-	
 	
 	writeBMPfile(bmpHeaderInfo, inputPixels, imageSize);
-	
-	free(txtInputBuffer);
-	free(inputPixels);
 }
 
 // decrypt a secret message from a BMPfile to a text file
@@ -317,7 +291,7 @@ void decode()
 	char bmpHeaderInfo[54];
 	unsigned char *inputPixels = (unsigned char *) calloc(imageSize, sizeof(unsigned char)); 
 	
-	readoutBMPfile(bmpHeaderInfo, inputPixels, imageSize);	//CHECKED
+	readBMPfile(bmpHeaderInfo, inputPixels, imageSize);	//CHECKED
 			
 					/*
 					//test: check if inputPixels stores data of inputBMPFileName
@@ -347,8 +321,7 @@ void decode()
 	
 	int array[9] = {0};
 	int numb = 0;
-	FILE *outputTxtFile = fopen(outputTxtFileName, "w");
-	
+	FILE *outputTxtFile = fopen(outputTxtFileName, "ab");
 	for(int i=0; i<imageSize/3; i+=8)
 	{
 		// store de LSB of red into a 8bit array
@@ -377,8 +350,8 @@ void decode()
 		putc(numb, outputTxtFile);
 	}
 	free(redPixels);
-	
 
+	
 }
 	
 	
