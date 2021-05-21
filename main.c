@@ -6,6 +6,8 @@ int main()
 	code();
 	decode();
 	
+	helpMenu();
+	
 	return 0;
 }
 

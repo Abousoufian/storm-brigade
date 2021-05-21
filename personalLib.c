@@ -64,7 +64,8 @@ void convertToBinary(char inputChar, int *array)
 	
 	array[8]= '\0';
 	
-	for (int i = bufferSize-2; i>0; i--) {
+	for (int i = bufferSize-2; i>0; i--) 
+	{
 		array[i] = temp%2;
 		temp /= 2;
 	}	
@@ -144,7 +145,7 @@ void code()
 	
 	fread(txtInputBuffer,sizeof(char), txtFileSize, inputTxtFile);
 	
-					
+					/*
 					//test: check if txtInputBuffer stores data of inputTxtFile
 					FILE *outputTxtFile = fopen(outputTxtFileName, "w");
 			
@@ -155,7 +156,7 @@ void code()
 					}
 						
 					fwrite(txtInputBuffer,sizeof(char), txtFileSize, outputTxtFile);
-					
+					*/
 			
 	//4.
 	fclose(inputTxtFile);
@@ -198,7 +199,8 @@ void code()
 					}
 					*/
 					
-	
+	free(txtInputBuffer);
+	free(inputPixels);
 	//8.
 	fclose(BMPfile);
 	
@@ -212,10 +214,10 @@ void code()
 		//1. krijg character (CHECKED)
 		char inputChar = txtInputBuffer[i];
 				
-					
+					/*
 					//test: print inputChar
 					printf("%c", inputChar);
-					
+					*/
 				
 			
 		//2. convert character naar binary
@@ -229,8 +231,7 @@ void code()
 					}
 					printf("\n");
 					*/
-					
-		
+	
 
 		//3. loop door byte array
 		for(int i =0; i < 8; i++)
@@ -340,16 +341,18 @@ void decode()
 			i=imageSize/3;
 		}
 		
-		FILE *outputTxtFile = fopen(outputTxtFileName, "a");
+		FILE *outputTxtFile = fopen(outputTxtFileName, "ab");
 			
 		if(outputTxtFile == NULL)
 		{
 			printf("Something went wrong while trying to open %s\n", outputTxtFileName);
 			exit(EXIT_FAILURE);
 		}
-				
-		putc(numb,outputTxtFile);
+		
+		fwrite(numb,sizeof(char), txtFileSize, outputTxtFile);
 	}
+	
+	
 }
 	
 	
