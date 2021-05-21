@@ -3,7 +3,7 @@
 
 int main() 
 {
-	//code();
+	code();
 	decode();
 	
 	return 0;
