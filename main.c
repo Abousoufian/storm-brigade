@@ -3,8 +3,10 @@
 
 int main() 
 {
-	//code();
+	code();
 	decode();
+	
+	helpMenu();
 	
 	return 0;
 }
