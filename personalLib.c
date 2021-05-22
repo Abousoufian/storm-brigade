@@ -2,16 +2,14 @@
 #include "nameOfFiles.h"
 void helpMenu()
 {
-	printf("-c -> Compress\n");
-	printf("-s -> The input text file that contains the secret message\n");
-	printf("-i -> The input bmp file\n");
-	printf("-d -> decompress\n");
-	printf("-o -> The output text file or bmp file\n\n\n");
-	
-	
-	printf("examples:\n");
-	printf("\tstormBrigade -c -s inputfile.txt -i meme.bmp -o memeou.bmp\n");
-	printf("\tstormBrigade -d -i meme.bmp -o bericht.txt\n");
+		printf("-c --> compress\n");
+		printf("-s --> het input tekstbestand met de secret message\n");
+		printf("-i --> de input bmp file\n");
+		printf("-o --> output image name\n");
+
+		printf("-d --> decompress\n");
+		printf("-i --> input bmp die de secret message bevat\n");
+		printf("-o --> output text file waar het gedecodeerde bericht in komt\n");
 }
 
 
