@@ -9,14 +9,6 @@ int main(int argc, char* argv[]) {
 	if (argc == 2 && strcmp(argv[1], "--help") == 0) //--help
 	{
 		helpMenu();
-		printf("-c --> compress\n");
-		printf("-s --> het input tekstbestand met de secret message\n");
-		printf("-i --> de input bmp file\n");
-		printf("-o --> output image name\n");
-
-		printf("-d --> decompress\n");
-		printf("-i --> input bmp die de secret message bevat\n");
-		printf("-o --> output text file waar het gedecodeerde bericht in komt\n");
 	}
 	else if (argc == 8 && strcmp(argv[1], "-c") == 0)
 	{
