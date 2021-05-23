@@ -1,67 +1,95 @@
 #include "personalLib.h"
-#include <stdio.h>
 
 
 
-int main() 
+
+int main(int argc, char* argv[]) 
 {
-int main(int argc, char* argv[]) {
+	
+	char inputTxtFileName[50];			
+
+	// stores the name of the input BMPfile	
+	char inputBMPFileName[50];
+
+	// stores the name of the output textfile
+	char outputTxtFileName[50];			
+
+	// stores the name of the output BMPfile	
+	char outputBMPFileName[50];
+	
+	char arguments = 0;
+
+	//situatie waar ik help menu oproep
 	if (argc == 2 && strcmp(argv[1], "--help") == 0) //--help
 	{
 		helpMenu();
-		printf("-c --> compress\n");
-		printf("-s --> het input tekstbestand met de secret message\n");
-		printf("-i --> de input bmp file\n");
-		printf("-o --> output image name\n");
-
-		printf("-d --> decompress\n");
-		printf("-i --> input bmp die de secret message bevat\n");
-		printf("-o --> output text file waar het gedecodeerde bericht in komt\n");
 	}
+	
+	// situatie waar ik codeer
 	else if (argc == 8 && strcmp(argv[1], "-c") == 0)
 	{
-		//Project.exe -c -s inputfile.txt -i meme.bmp -o memeOut.bmp
-		if (argc == 8 && strcmp(argv[2], "-s") == 0)
+		for(int i=2; i<8; i+=2)
 		{
-			//InputTXT geen vaste grootte geven //werkt niet
-			//InputTXT = (char*)malloc(strlen(argv[3]));
-			//memcpy(InputTXT, argv[3], strlen(argv[3]));
-
-			memcpy(InputTXT, argv[3], 20);
+			if(strcmp(argv[i], "-s") == 0)
+			{
+				strcpy(inputTxtFileName, argv[i+1]);
+				arguments |= 0b00000001;
+				
+			}
+			else if(strcmp(argv[i], "-i") == 0)
+			{
+				strcpy(inputBMPFileName, argv[i+1]);
+				arguments |= 0b00000010;
+			}
+			else if(strcmp(argv[i], "-o") == 0)
+			{
+				strcpy(outputBMPFileName, argv[i+1]);
+				arguments |= 0b00000100;
+			}
 		}
-		if (argc == 8 && strcmp(argv[4], "-i") == 0)
+		if (arguments==0b00000111)
 		{
-			memcpy(BMPINPUTFILE, argv[5], 20);
+			code(inputTxtFileName, inputBMPFileName, outputBMPFileName);
 		}
-		if (argc == 8 && strcmp(argv[6], "-o") == 0)
+		else
 		{
-			memcpy(BMPOUTPUTFILE, argv[7], 20);
+			printf("Not all arguments are filled in\n");
+			printf("%d\n", arguments);
 		}
-		compressDecompress('c');
 	}
+	// situatie waar ik decodeer
 	else if (argc == 6 && strcmp(argv[1], "-d") == 0)
 	{
-		//Project.exe -d -i memeOut.bmp -o bericht.txt
-
-		if (argc == 6 && strcmp(argv[2], "-i") == 0)
+		for(int i=2; i<6; i+=2)
 		{
-			memcpy(BMPINPUTFILE, argv[3], 20);
+			// -s
+			if(strcmp(argv[i], "-i") == 0)
+			{
+				strcpy(outputBMPFileName, argv[i+1]);
+				arguments |= 0b00000001;
+			}
+			else if(strcmp(argv[i], "-o") == 0)
+			{
+				strcpy(outputTxtFileName, argv[i+1]);
+				arguments |= 0b00000010;
+			}
 		}
-		if (argc == 6 && strcmp(argv[4], "-o") == 0)
+		
+		if (arguments==0b00000011)
 		{
-			memcpy(OutputTXT, argv[5], 20);
+			printf("start decoding\n");
+			decode(outputBMPFileName, outputTxtFileName);
 		}
-		compressDecompress('d');
+		else
+		{
+			printf("Not all arguments are filled in\n");
+		}
 	}
 	else
 	{
-		printf("Fout!!! \nNiet de juiste argumenten \nKijk in --help voor de uitleg \n");
-		exit(EXIT_FAILURE);
+		printf("Something went wrong\n");
+		printf("incorrect arguments\n");
 	}
-	
-	code();
-	decode();
-	
 	return 0;
 }
 

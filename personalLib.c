@@ -1,19 +1,27 @@
 #include "personalLib.h"
-#include "nameOfFiles.h"
+
+/*
+* This function will print the help menu
+*/
 void helpMenu()
 {
-		printf("-c --> compress\n");
-		printf("-s --> het input tekstbestand met de secret message\n");
-		printf("-i --> de input bmp file\n");
-		printf("-o --> output image name\n");
-
-		printf("-d --> decompress\n");
-		printf("-i --> input bmp die de secret message bevat\n");
-		printf("-o --> output text file waar het gedecodeerde bericht in komt\n");
+	printf("-c -> Compress\n");
+	printf("-s -> The input text file that contains the secret message\n");
+	printf("-i -> The input bmp file\n");
+	printf("-d -> decompress\n");
+	printf("-o -> The output text file or bmp file\n\n\n");
+	
+	
+	printf("examples:\n");
+	printf("\tstormBrigade -c -s inputfile.txt -i meme.bmp -o memeou.bmp\n");
+	printf("\tstormBrigade -d -i meme.bmp -o bericht.txt\n");
 }
 
-
-// get size of a file
+/*
+* This function will get a size of een TXT file
+* @Param: FILE pointer of txt file
+* will return the value of SIZE as an integerr
+*/
 int getSize(FILE *file)
 {	
 	fseek(file, 0, SEEK_END);
@@ -23,7 +31,11 @@ int getSize(FILE *file)
     return size;
 }
 
-// get size of a BMPfile
+/*
+* This function will get a size of a BMP file
+* @Param: FILE pointer bmp file
+* @Return: will return the value of SIZE as an integer
+*/
 int getSizeBMPFile(FILE *BMPfile)
 {
 	unsigned char bmpHeaderInfo[54];
@@ -38,13 +50,20 @@ int getSizeBMPFile(FILE *BMPfile)
 	return imageSize;
 }
 
-// read data from a BMPfile
-void readBMPfile(char *bmpHeaderInfo, unsigned char *inputPixels, int imageSize)
+/*
+* This function will read data from a BMPfile
+* @Param: char pointer use to store the bmp header info  
+* @Param: unsigned char pointer use to store the pixels of an image
+* @Param: integer value of the immagesize
+* @Param: char pointer to a bmp file
+* @Return: nothing
+*/
+void readBMPfile(char *bmpHeaderInfo, unsigned char *inputPixels, int imageSize, char *BMPFileName)
 {
-    FILE *fp = fopen(inputBMPFileName, "rb");
+    FILE *fp = fopen(BMPFileName, "rb");
     if(fp == NULL)
     {
-        printf("Something went wrong while trying to open %s\n", inputBMPFileName);
+        printf("Something went wrong while trying to open %s\n", BMPFileName);
         exit(EXIT_FAILURE);
     }
     
@@ -54,22 +73,12 @@ void readBMPfile(char *bmpHeaderInfo, unsigned char *inputPixels, int imageSize)
     fclose(fp);
 }
 
-void readoutBMPfile(char *bmpHeaderInfo, unsigned char *inputPixels, int imageSize)
-{
-    FILE *fp = fopen(outputBMPFileName, "rb");
-    if(fp == NULL)
-    {
-        printf("Something went wrong while trying to open %s\n", outputBMPFileName);
-        exit(EXIT_FAILURE);
-    }
-    
-	fread(bmpHeaderInfo, sizeof(unsigned char), 54, fp);
-
-    fread(inputPixels, sizeof(unsigned char), imageSize, fp);
-    fclose(fp);
-}
-
-// converts decimal number or character into a binary number
+/*
+* This function will convert a character into a binary number
+* @Param: char pointer that holds a character
+* @Param: char pointer that holds the number in binary of the converted character
+* @Return: nothing
+*/
 void convertToBinary(char inputChar, char *array)
 {
 	int bufferSize = 9;
@@ -84,13 +93,20 @@ void convertToBinary(char inputChar, char *array)
 	}	
 }
 
-// write data to a BMPfile
-void writeBMPfile(char *bmpHeaderInfo, unsigned char *inputPixels, int imageSize)
+/*
+* This function will write data to a BMPfile
+* @Param: char pointer use to store the bmp header info  
+* @Param: unsigned char pointer use to store the pixels of an image
+* @Param: integer value of the immagesize
+* @Param: char pointer to a bmp file
+* @Return: nothing
+*/
+void writeBMPfile(char *bmpHeaderInfo, unsigned char *inputPixels, int imageSize, char *BMPFileName)
 {
-    FILE *fp = fopen(outputBMPFileName, "wb");
+    FILE *fp = fopen(BMPFileName, "wb");
     if(fp == NULL)
     {
-        printf("Something went wrong while trying to open %s\n", outputBMPFileName);
+        printf("Something went wrong while trying to open %s\n", BMPFileName);
         exit(EXIT_FAILURE);
     }
   
@@ -100,18 +116,29 @@ void writeBMPfile(char *bmpHeaderInfo, unsigned char *inputPixels, int imageSize
     fclose(fp);
 }
 
+/*
+* This function will get the LSB of the red color
+* @Param: unsigned char pointer use to store the pixels of an image  
+* @Param: unsigned char pointer use to store the LSB of the red color
+* @Param: integer value of the immagesize
+* @Return: nothing
+*/
 void getLSB(unsigned char *inputPixels, unsigned char *redPixels, int imageSize)
 {	
 	int redPxIndex = 0;
 	
-	for(int i =0; i < imageSize-2; i+=3)
+	for(int i =0; i < imageSize-2; i++)
 	{
-		redPixels[redPxIndex] = inputPixels[i+2]%2;
+		redPixels[redPxIndex] = inputPixels[i]%2;
 		redPxIndex++;
 	}	
 }
 
-// convert binary array to numb
+/*
+* This function will convert binary array to numb
+* @Param: pointer of an array of integer pointer use to store the pixels of an image  
+* @Return: nothing
+*/
 int convertToNumb(int *array)
 {
 	int numb = 0;
@@ -124,8 +151,14 @@ int convertToNumb(int *array)
 	return numb;
 }		
 
-// encrypt a secret message from a text file to a BMPfile
-void code()
+/*
+* This function will encrypt a secret message from a text file to a BMPfile
+* @Param: char pointer use to store the input txt file
+* @Param: char pointer use to store the input bmp file
+* @Param: char pointer use to store the output bmp file
+* @Return: nothing
+*/
+void code(char *inputTxtFileName, char *inputBMPFileName, char *outputBMPFileName)
 {
 	
 	//--------------------------------------compressing-message--------------------------------------------------------//
@@ -135,7 +168,7 @@ void code()
 	//3. store data of textfile into a buffer
 	//4. close input textfile
 	
-	//1. (CHECKED)
+	//1.
 	FILE *inputTxtFile = fopen(inputTxtFileName, "r");
     
 	if(inputTxtFile == NULL)
@@ -144,33 +177,15 @@ void code()
         exit(EXIT_FAILURE);
     }
 	
-	//2. (CHECKED)
+	//2.
 	int txtFileSize = getSize(inputTxtFile);
 			
-					/*
-					//test: print txtFileSize
-					printf("%d\n", txtFileSize);
-					*/
-			
-	//3. (CHECKED)
+	//3.
 	// stores the data of the input text file into the buffer (CHECKED)
 	unsigned char *txtInputBuffer  = (unsigned char *) calloc(txtFileSize, sizeof(unsigned char));
 	
 	fread(txtInputBuffer,sizeof(char), txtFileSize, inputTxtFile);
-	
-					/*
-					//test: check if txtInputBuffer stores data of inputTxtFile
-					FILE *outputTxtFile = fopen(outputTxtFileName, "w");
-			
-					if(outputTxtFile == NULL)
-					{
-						printf("Something went wrong while trying to open %s\n", outputTxtFileName);
-						exit(EXIT_FAILURE);
-					}
-						
-					fwrite(txtInputBuffer,sizeof(char), txtFileSize, outputTxtFile);
-					*/
-			
+				
 	//4.
 	fclose(inputTxtFile);
 	
@@ -180,7 +195,7 @@ void code()
 	//7. store data of BMPfile into a buffer
 	//8. close BMPfile
 	
-	//5. (CHECKED)
+	//5.
 	FILE *BMPfile = fopen(inputBMPFileName, "rb");
     if(BMPfile == NULL)
     {
@@ -188,7 +203,7 @@ void code()
         exit(EXIT_FAILURE);
     }
 	
-	//6. (CHECKED)
+	//6.
 	unsigned int imageSize = getSizeBMPFile(BMPfile);
 			
 					/*
@@ -197,11 +212,11 @@ void code()
 					*/
 			
 	
-	//7. (CHECKED)
-	char bmpHeaderInfo[54];
+	//7.
+	char *bmpHeaderInfo = (char *) calloc(54, sizeof(char));
 	unsigned char *inputPixels = (unsigned char *) calloc(imageSize, sizeof(unsigned char)); 
 	
-	readBMPfile(bmpHeaderInfo, inputPixels, imageSize);	//CHECKED
+	readBMPfile(bmpHeaderInfo, inputPixels, imageSize, inputBMPFileName);	//CHECKED
 			
 					
 					/*
@@ -218,31 +233,17 @@ void code()
 	
 	//-----------------------------------------------------------------------------------------------------------------//
 
-	int bmpIndex = 2;
+	int bmpIndex = 0;
 	char array[8] = {0};
 
 	for (int i=0; i<txtFileSize; i++) 
 	{
-		//1. krijg character (CHECKED)
+		//1. krijg character
 		char inputChar = txtInputBuffer[i];
-				
-					/*
-					//test: print inputChar
-					printf("%c: ", inputChar);
-					*/
-					
+
 		//2. convert character naar binary
 		convertToBinary(inputChar, array);	
-					
-					/*
-					//test: print array
-					for(int i=0; i<8; i++)
-					{
-						printf("%d", array[i]);
-					}
-					printf("\n");
-					*/
-					
+										
 		//3. loop door byte array
 		for(char i=0; i<8;i++)
 		{
@@ -250,20 +251,8 @@ void code()
 			{
 			inputPixels[bmpIndex] ^= 1;
 			}	
-			bmpIndex +=3;
+			bmpIndex ++;
 		}
-		
-	
-		
-					/*
-					//test: print inputPixels after LSB of red is changed
-					for(int i =0; i < imageSize-2; i+=3)
-					{
-						printf("pixel %d: B= %d, G=%d, R=%d\n", i, inputPixels[i], inputPixels[i+1], inputPixels[i+2]);
-					}
-					*/
-					
-					
 	}
 	
 	//4. insert "*" in BMPfile to mark the end of secret message
@@ -274,19 +263,23 @@ void code()
 		{
 			inputPixels[bmpIndex] ^= 1;
 		}	
-		bmpIndex+=3;
+		bmpIndex++;
 	}
 
+	writeBMPfile(bmpHeaderInfo, inputPixels, imageSize, outputBMPFileName);
 	
-	
-	writeBMPfile(bmpHeaderInfo, inputPixels, imageSize);
-	
+	free(bmpHeaderInfo);
 	free(txtInputBuffer);
 	free(inputPixels);
 }
 
-// decrypt a secret message from a BMPfile to a text file
-void decode()
+/*
+* This function will decrypt a secret message from a BMPfile to a text file
+* @Param: char pointer use to store the output bmp file
+* @Param: char pointer use to store the output txt file
+* @Return: nothing
+*/
+void decode(char *outputBMPFileName, char *outputTxtFileName)
 {
 	//-----------------------------------------------------------------------------------------------------------------//
 	//5. open BMPfile
@@ -294,7 +287,7 @@ void decode()
 	//7. store data of BMPfile into a buffer
 	//8. close BMPfile
 	
-	//5. (CHECKED)
+	//5.
 	FILE *BMPfile = fopen(outputBMPFileName, "rb");
     if(BMPfile == NULL)
     {
@@ -302,44 +295,21 @@ void decode()
         exit(EXIT_FAILURE);
     }
 	
-	//6. (CHECKED)
+	//6.
 	unsigned int imageSize = getSizeBMPFile(BMPfile);
-			
-					/*
-					//test: print imageSize
-					printf("%d\n", imageSize);
-					*/
-			
 	
-	//7. (CHECKED)
-	char bmpHeaderInfo[54];
+	//7.
+	char *bmpHeaderInfo = (char *) calloc(54, sizeof(char));
 	unsigned char *inputPixels = (unsigned char *) calloc(imageSize, sizeof(unsigned char)); 
 	
-	readoutBMPfile(bmpHeaderInfo, inputPixels, imageSize);	//CHECKED
-			
-					/*
-					//test: check if inputPixels stores data of inputBMPFileName
-					for(int i =0; i < imageSize-2; i+=3)
-					{
-						printf("pixel %d: B= %d, G=%d, R=%d\n", i, inputPixels[i], inputPixels[i+1], inputPixels[i+2]);
-					}
-					*/
+	readBMPfile(bmpHeaderInfo, inputPixels, imageSize, outputBMPFileName);
 	
 	fclose(BMPfile);	
 	
 	
-	unsigned char *redPixels = (unsigned char *) calloc(imageSize/3, sizeof(unsigned char));
+	unsigned char *redPixels = (unsigned char *) calloc(imageSize, sizeof(unsigned char));
 	
 	getLSB(inputPixels, redPixels, imageSize);
-	
-					/*
-					//test: check if redPixels stores data of inputPixels
-					for(int i =0; i < (imageSize-2)/3; i++)
-					{
-						printf("pixel %d: R=%d\n", i, redPixels[i]);
-					}
-					*/
-					
 				
 	free(inputPixels); 	
 	
@@ -347,7 +317,7 @@ void decode()
 	int numb = 0;
 	FILE *outputTxtFile = fopen(outputTxtFileName, "w");
 	
-	for(int i=0; i<imageSize/3; i+=8)
+	for(int i=0; i<imageSize; i+=8)
 	{
 		// store de LSB of red into a 8bit array
 		for(int j=0; j<8; j++)
@@ -358,12 +328,10 @@ void decode()
 		// convert binary array to numb
 		numb = convertToNumb(array);
 		
-		printf("%d\t", numb);
-		
 		if(numb==42)
 		{
 			
-			i=imageSize/3;
+			i=imageSize;
 		}
 		
 		if(outputTxtFile == NULL)
@@ -374,10 +342,7 @@ void decode()
 		
 		putc(numb, outputTxtFile);
 	}
+	fclose(outputTxtFile);
+	free(bmpHeaderInfo);
 	free(redPixels);
-	
-
 }
-	
-	
-	
