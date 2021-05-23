@@ -5,7 +5,7 @@
 
 int main(int argc, char* argv[]) 
 {
-	
+	// stores the name of the input textfile	
 	char inputTxtFileName[50];			
 
 	// stores the name of the input BMPfile	
@@ -19,13 +19,10 @@ int main(int argc, char* argv[])
 	
 	char arguments = 0;
 
-	//situatie waar ik help menu oproep
-	if (argc == 2 && strcmp(argv[1], "--help") == 0) //--help
+	if (argc == 2 && strcmp(argv[1], "--help") == 0)
 	{
 		helpMenu();
 	}
-	
-	// situatie waar ik codeer
 	else if (argc == 8 && strcmp(argv[1], "-c") == 0)
 	{
 		for(int i=2; i<8; i+=2)
@@ -49,7 +46,9 @@ int main(int argc, char* argv[])
 		}
 		if (arguments==0b00000111)
 		{
+			printf("start coding\n");
 			code(inputTxtFileName, inputBMPFileName, outputBMPFileName);
+			printf("coding finished\n");
 		}
 		else
 		{
@@ -57,12 +56,10 @@ int main(int argc, char* argv[])
 			printf("%d\n", arguments);
 		}
 	}
-	// situatie waar ik decodeer
 	else if (argc == 6 && strcmp(argv[1], "-d") == 0)
 	{
 		for(int i=2; i<6; i+=2)
 		{
-			// -s
 			if(strcmp(argv[i], "-i") == 0)
 			{
 				strcpy(outputBMPFileName, argv[i+1]);
@@ -79,6 +76,7 @@ int main(int argc, char* argv[])
 		{
 			printf("start decoding\n");
 			decode(outputBMPFileName, outputTxtFileName);
+			printf("decoding finished\n");
 		}
 		else
 		{

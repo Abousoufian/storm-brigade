@@ -25,7 +25,7 @@ void helpMenu()
 int getSize(FILE *file)
 {	
 	fseek(file, 0, SEEK_END);
-	long int size = ftell(file);
+	int size = ftell(file);
 	rewind(file);
 	
     return size;
@@ -44,10 +44,27 @@ int getSizeBMPFile(FILE *BMPfile)
 
 	unsigned int width = bmpHeaderInfo[18] | bmpHeaderInfo[19] << 8 | bmpHeaderInfo[20] << 16 | bmpHeaderInfo[21] << 24;
 	unsigned int height = bmpHeaderInfo[22] | bmpHeaderInfo[23] << 8 | bmpHeaderInfo[24] << 16 | bmpHeaderInfo[25] << 24;
+	
+	validateDimension(width, height);
 
     unsigned int imageSize = 3 * width * height;
 	
 	return imageSize;
+}
+
+/*
+* This function will check of the input BMP has the right specification
+* @Param: unsigned int width of the bmp file 
+* @Param: unsigned int height of the bmp file 
+* @Return: nothing
+*/
+void validateDimension(unsigned int width, unsigned int height)
+{
+	if((width!=height) && width%2!=0)
+	{
+		printf("Please use a BMP file where the width and height of the pixels are equal and a multiply of 4\n");
+        exit(EXIT_FAILURE);
+	}
 }
 
 /*
@@ -205,29 +222,13 @@ void code(char *inputTxtFileName, char *inputBMPFileName, char *outputBMPFileNam
 	
 	//6.
 	unsigned int imageSize = getSizeBMPFile(BMPfile);
-			
-					/*
-					//test: print imageSize
-					printf("%d\n", imageSize);
-					*/
-			
-	
+				
 	//7.
 	char *bmpHeaderInfo = (char *) calloc(54, sizeof(char));
 	unsigned char *inputPixels = (unsigned char *) calloc(imageSize, sizeof(unsigned char)); 
 	
 	readBMPfile(bmpHeaderInfo, inputPixels, imageSize, inputBMPFileName);	//CHECKED
 			
-					
-					/*
-					//test: check if inputPixels stores data of inputBMPFileName
-					for(int i =0; i < imageSize-2; i+=3)
-					{
-						printf("pixel %d: B= %d, G=%d, R=%d\n", i, inputPixels[i], inputPixels[i+1], inputPixels[i+2]);
-					}
-					*/
-					
-	
 	//8.
 	fclose(BMPfile);
 	
