@@ -1,8 +1,5 @@
 #include "personalLib.h"
 
-
-
-
 int main(int argc, char* argv[]) 
 {
 	// stores the name of the input textfile	

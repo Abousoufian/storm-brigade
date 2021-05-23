@@ -8,7 +8,7 @@ void helpMenu()
 	printf("-c -> Compress\n");
 	printf("-s -> The input text file that contains the secret message\n");
 	printf("-i -> The input bmp file\n");
-	printf("-d -> decompress\n");
+	printf("-d -> Decompress\n");
 	printf("-o -> The output text file or bmp file\n\n\n");
 	
 	
@@ -60,7 +60,7 @@ int getSizeBMPFile(FILE *BMPfile)
 */
 void validateDimension(unsigned int width, unsigned int height)
 {
-	if((width!=height) && width%2!=0)
+	if((width!=height) && width%4!=0)
 	{
 		printf("Please use a BMP file where the width and height of the pixels are equal and a multiply of 4\n");
         exit(EXIT_FAILURE);
@@ -227,7 +227,7 @@ void code(char *inputTxtFileName, char *inputBMPFileName, char *outputBMPFileNam
 	char *bmpHeaderInfo = (char *) calloc(54, sizeof(char));
 	unsigned char *inputPixels = (unsigned char *) calloc(imageSize, sizeof(unsigned char)); 
 	
-	readBMPfile(bmpHeaderInfo, inputPixels, imageSize, inputBMPFileName);	//CHECKED
+	readBMPfile(bmpHeaderInfo, inputPixels, imageSize, inputBMPFileName);
 			
 	//8.
 	fclose(BMPfile);
@@ -307,7 +307,6 @@ void decode(char *outputBMPFileName, char *outputTxtFileName)
 	
 	fclose(BMPfile);	
 	
-	
 	unsigned char *redPixels = (unsigned char *) calloc(imageSize, sizeof(unsigned char));
 	
 	getLSB(inputPixels, redPixels, imageSize);
@@ -331,7 +330,6 @@ void decode(char *outputBMPFileName, char *outputTxtFileName)
 		
 		if(numb==42)
 		{
-			
 			i=imageSize;
 		}
 		
